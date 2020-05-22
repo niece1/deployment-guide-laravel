@@ -90,6 +90,7 @@
 - sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
 ```
 
+```
 server {
         listen 80;
         root /var/www/html;
@@ -109,6 +110,8 @@ server {
                 deny all;
         }
 }
+
+```
 
 ```
 sudo ln -s /etc/nginx/sites-available/YOUR.DOMAIN.COM /etc/nginx/sites-enabled/ to create symlink to enabled sites
