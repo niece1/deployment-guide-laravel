@@ -114,49 +114,61 @@ server {
 ```
 
 ```
-sudo ln -s /etc/nginx/sites-available/YOUR.DOMAIN.COM /etc/nginx/sites-enabled/ to create symlink to enabled sites
-sudo unlink /etc/nginx/sites-enabled/default to remove default link
-sudo nginx -t test the whole config
-sudo systemctl reload nginx to apply all changes
-sudo vim /var/www/html/info.php to start a new PHP file, fill it with <?php phpinfo();
-sudo rm /var/www/html/info.php optional command to get rid of test file
+- sudo ln -s /etc/nginx/sites-available/YOUR.DOMAIN.COM /etc/nginx/sites-enabled/ to create symlink to enabled sites
+- sudo unlink /etc/nginx/sites-enabled/default to remove default link
+- sudo nginx -t test the whole config
+- sudo systemctl reload nginx to apply all changes
+- sudo vim /var/www/html/info.php to start a new PHP file, fill it with <?php phpinfo();
+- sudo rm /var/www/html/info.php optional command to get rid of test file
 ```
 
 ### Let's Dial in The Laravel Ecosystem
 
-sudo apt-get install php7.2-mbstring php7.2-xml composer unzip
-mysql -u root -p Login to create the Laravel DB
-CREATE DATABASE laravel DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-GRANT ALL ON laravel.* TO 'laraveluser'@'localhost' IDENTIFIED BY 'password';
-FLUSH PRIVILEGES;
-exit
-cd /var/www/html, sudo mkdir -p first-project
-sudo chown laravel:laravel first-project
-git clone https://github.com/coderstape/laravel-58-from-scratch.git .
-composer install
-cp .env.example .env, and then vim .env
-APP_NAME=Laravel
-APP_ENV=production
-APP_KEY=
-APP_DEBUG=false
-APP_URL=http://YOUR.DOMAIN.COM
+```
+- sudo apt-get install php7.2-mbstring php7.2-xml composer unzip
+- mysql -u root -p Login to create the Laravel DB
+- CREATE DATABASE laravel DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+- GRANT ALL ON laravel.* TO 'laraveluser'@'localhost' IDENTIFIED BY 'password';
+- FLUSH PRIVILEGES;
+- exit
+- cd /var/www/html, sudo mkdir -p first-project
+- sudo chown laravel:laravel first-project
+- git clone https://github.com/coderstape/laravel-58-from-scratch.git .
+- composer install
+- cp .env.example .env, and then vim .env
+```
 
-LOG_CHANNEL=stack
+- APP_NAME=Laravel
+- APP_ENV=production
+- APP_KEY=
+- APP_DEBUG=false
+- APP_URL=http://YOUR.DOMAIN.COM
 
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=root
-DB_USERNAME=laravel
-DB_PASSWORD=STRONG_PASSWORD_HERE
-php artisan migrate
-php artisan key:generate to generate the key
-sudo chgrp -R www-data storage bootstrap/cache fix permissions
-sudo chmod -R ug+rwx storage bootstrap/cache fix permissions
-sudo chmod -R 755 /var/www/html/first-project fix permissions
-chmod -R o+w /var/www/html/first-project/storage/ fix permission
-Modify Nginx
-sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
+- LOG_CHANNEL=stack
+
+- DB_CONNECTION=mysql
+- DB_HOST=127.0.0.1
+- DB_PORT=3306
+- DB_DATABASE=root
+- DB_USERNAME=laravel
+- DB_PASSWORD=STRONG_PASSWORD_HERE
+
+```
+- php artisan migrate
+- php artisan key:generate to generate the key
+- sudo chgrp -R www-data storage bootstrap/cache fix permissions
+- sudo chmod -R ug+rwx storage bootstrap/cache fix permissions
+- sudo chmod -R 755 /var/www/html/first-project fix permissions
+- chmod -R o+w /var/www/html/first-project/storage/ fix permission
+```
+
+### Modify Nginx
+
+```
+- sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
+```
+
+```
 server {
     listen 80;
     listen [::]:80;
@@ -179,15 +191,26 @@ server {
             deny all;
     }
 }
-sudo nginx -t
-sudo systemctl reload nginx reload Nginx
-Let's Encrypt
+```
+
+```
+- sudo nginx -t
+- sudo systemctl reload nginx reload Nginx
+```
+
+### Let's Encrypt
+
 sudo add-apt-repository ppa:certbot/certbot to get repo
 sudo apt install python-certbot-nginx to install
 sudo certbot certonly --webroot --webroot-path=/var/www/html/quickstart/public -d example.com -d www.example.com
 sudo certbot certonly --webroot --webroot-path=/var/www/html/first-project/public -d YOUR.DOMAIN.COM
-Final mod for Nginx
+
+### Final mod for Nginx
+
+```
 sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
+```
+```
 server {
     listen 80;
     listen [::]:80;
@@ -234,8 +257,12 @@ server {
             allow all;
     }
 }
-sudo nginx -t
-sudo ufw app list For firewall
-sudo ufw allow 'Nginx HTTPS' to add NGINX
-sudo ufw status to verify change
-sudo systemctl reload nginx reload Nginx
+```
+
+```
+- sudo nginx -t
+- sudo ufw app list For firewall
+- sudo ufw allow 'Nginx HTTPS' to add NGINX
+- sudo ufw status to verify change
+- sudo systemctl reload nginx reload Nginx
+```
