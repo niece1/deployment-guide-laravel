@@ -208,7 +208,7 @@ sudo certbot certonly --webroot --webroot-path=/var/www/html/first-project/publi
 ### Final mod for Nginx
 
 ```
-sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
+- sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
 ```
 ```
 server {
