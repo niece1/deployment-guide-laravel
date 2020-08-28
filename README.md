@@ -131,8 +131,8 @@ server {
 - GRANT ALL ON laravel.* TO 'laraveluser'@'localhost' IDENTIFIED BY 'password';
 - FLUSH PRIVILEGES;
 - exit
-- cd /var/www/html, sudo mkdir -p first-project
-- sudo chown laravel:laravel first-project
+- cd /var/www/html, sudo mkdir -p project-name
+- sudo chown laravel:laravel project-name
 - git clone https://github.com/coderstape/laravel-58-from-scratch.git .
 - composer install
 - cp .env.example .env, and then vim .env
@@ -158,8 +158,8 @@ server {
 - php artisan key:generate to generate the key
 - sudo chgrp -R www-data storage bootstrap/cache fix permissions
 - sudo chmod -R ug+rwx storage bootstrap/cache fix permissions
-- sudo chmod -R 755 /var/www/html/first-project fix permissions
-- chmod -R o+w /var/www/html/first-project/storage/ fix permission
+- sudo chmod -R 755 /var/www/html/project-name fix permissions
+- chmod -R o+w /var/www/html/project-name/storage/ fix permission
 ```
 
 ### Modify Nginx
@@ -173,7 +173,7 @@ server {
     listen 80;
     listen [::]:80;
 
-    root /var/www/html/first-project/public;
+    root /var/www/html/project-name/public;
     index index.php index.html index.htm index.nginx-debian.html;
 
     server_name YOUR.DOMAIN.COM;
@@ -203,7 +203,7 @@ server {
 sudo add-apt-repository ppa:certbot/certbot to get repo
 sudo apt install python-certbot-nginx to install
 sudo certbot certonly --webroot --webroot-path=/var/www/html/quickstart/public -d example.com -d www.example.com
-sudo certbot certonly --webroot --webroot-path=/var/www/html/first-project/public -d YOUR.DOMAIN.COM
+sudo certbot certonly --webroot --webroot-path=/var/www/html/project-name/public -d YOUR.DOMAIN.COM
 
 ### Final mod for Nginx
 
@@ -223,7 +223,7 @@ server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
     server_name YOUR.DOMAIN.COM;
-    root /var/www/html/first-project/public;
+    root /var/www/html/project-name/public;
 
     ssl_certificate /etc/letsencrypt/live/YOUR.DOMAIN.COM/fullchain.pem;
 	ssl_certificate_key /etc/letsencrypt/live/YOUR.DOMAIN.COM/privkey.pem;
