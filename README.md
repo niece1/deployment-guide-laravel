@@ -17,9 +17,6 @@
 - ls ~/.ssh to show files in local machine
 - Get the public key, cat ~/.ssh/id_rsa.pub
 - Copy it
-- cd ~/.ssh and vim authorized_keys
-- Paste key
-- Repeat steps for laravel user
 - su laravel then mkdir ~/.ssh fix permissions chmod 700 ~/.ssh
 - vim ~/.ssh/authorized_keys and paste key
 - chmod 600 ~/.ssh/authorized_keys to restrict this from being modified
@@ -159,7 +156,7 @@ server {
 - sudo chgrp -R www-data storage bootstrap/cache fix permissions
 - sudo chmod -R ug+rwx storage bootstrap/cache fix permissions
 - sudo chmod -R 755 /var/www/html/project-name fix permissions
-- chmod -R o+w /var/www/html/project-name/storage/ fix permission
+- chmod -R 777 /var/www/html/project-name/storage/ fix permission
 ```
 
 ### Modify Nginx
@@ -200,10 +197,12 @@ server {
 
 ### Let's Encrypt
 
-sudo add-apt-repository ppa:certbot/certbot to get repo
-sudo apt install python-certbot-nginx to install
-sudo certbot certonly --webroot --webroot-path=/var/www/html/quickstart/public -d example.com -d www.example.com
-sudo certbot certonly --webroot --webroot-path=/var/www/html/project-name/public -d YOUR.DOMAIN.COM
+sudo snap install core; sudo snap refresh core
+sudo apt-get remove certbot
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+sudo certbot --nginx
+sudo certbot renew --dry-run
 
 ### Final mod for Nginx
 
@@ -212,50 +211,46 @@ sudo certbot certonly --webroot --webroot-path=/var/www/html/project-name/public
 ```
 ```
 server {
-    listen 80;
-    listen [::]:80;
 
-    server_name YOUR.DOMAIN.COM;
-    return 301 https://$server_name$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    server_name YOUR.DOMAIN.COM;
     root /var/www/html/project-name/public;
+    index index.php index.html index.htm index.nginx-debian.html;
 
-    ssl_certificate /etc/letsencrypt/live/YOUR.DOMAIN.COM/fullchain.pem;
-	ssl_certificate_key /etc/letsencrypt/live/YOUR.DOMAIN.COM/privkey.pem;
-    
-    ssl_protocols TLSv1.2;
-	ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
-	ssl_prefer_server_ciphers on;
-
-	add_header X-Frame-Options "SAMEORIGIN";
-	add_header X-XSS-Protection "1; mode=block";
-	add_header X-Content-Type-Options "nosniff";
-
-	index index.php index.html index.htm index.nginx-debian.html;
-
-    charset utf-8;
+    server_name YOUR.DOMAIN.COM;
 
     location / {
-            try_files $uri $uri/ /index.php?$query_string;
+        try_files $uri $uri/ /index.php?$query_string;
     }
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
     }
 
     location ~ /\.ht {
             deny all;
     }
 
-    location ~ /.well-known {
-            allow all;
-    }
+    listen [::]:443 ssl ipv6only=on; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/airways-media.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/airways-media.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+server {
+    if ($host = YOUR.DOMAIM.COM) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    listen [::]:80;
+
+    server_name YOUR.DOMAIM.COM;
+    return 404; # managed by Certbot
+
+
 }
 ```
 
