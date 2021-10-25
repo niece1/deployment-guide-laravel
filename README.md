@@ -1,9 +1,9 @@
 # deployment-guide-laravel
 
-### Getting Started
+### Getting Started (AWS EC2 instance Ubuntu 20.04)
 
 ```
-- Change password on first login
+- Change password on first login (not in case of AWS EC2)
 - adduser laravel
 - Enter password and other information
 - usermod -aG sudo laravel
@@ -14,11 +14,11 @@
 ```
 - In your local machine, ssh-keygen
 - Generate a key, if you leave passphrase blank, no need for password
-- ls ~/.ssh to show files in local machine
+- ls ~/.ssh to show files in your local machine
 - Get the public key, cat ~/.ssh/id_rsa.pub
 - Copy it
-- su laravel then mkdir ~/.ssh fix permissions chmod 700 ~/.ssh
-- vim ~/.ssh/authorized_keys and paste key
+- su laravel then mkdir ~/.ssh fix permissions chmod 700 ~/.ssh in your production server
+- nano ~/.ssh/authorized_keys and paste key
 - chmod 600 ~/.ssh/authorized_keys to restrict this from being modified
 - exit to return to root user
 ```
@@ -26,7 +26,7 @@
 ### Disable Password from Server
 
 ```
-- sudo vim /etc/ssh/sshd_config
+- sudo nano /etc/ssh/sshd_config
 - Find PasswordAuthentication and set that to no
 - Turn on PubkeyAuthentication yes
 - Turn off ChallengeResponseAuthentication no
@@ -47,7 +47,7 @@
 - sudo ufw status
 ```
 
-### Install Linux, Nginx, MySQL, PHP
+### Install Nginx, MySQL, PHP
 
 #### Nginx
 
@@ -60,11 +60,11 @@
 - Visit server in browser
 ```
 
-#### MySQL
+#### MySQL 8 (in Ubuntu 20.04 this version will be downloaded by default, one need 1Gb RAM min)
 
 ```
-- sudo apt install mysql-server enter Y to install
-- sudo mysql_secure_installation to run automated securing script
+- sudo apt install mysql-server // enter Y to install
+- sudo mysql_secure_installation // to run automated securing script
 - Press N for VALIDATE PASSWORD plugin
 - Set root password
 - Remove anonymous users? Y
@@ -72,10 +72,10 @@
 - Remove test database and access to it? Y
 - Reload privilege tables now? Y
 - sudo mysql to enter MySQL CLI
-- SELECT user,authentication_string,plugin,host FROM mysql.user; to verify root user's auth method
-- ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'STRONG_PASSWORD_HERE'; to set a root password
-- SELECT user,authentication_string,plugin,host FROM mysql.user; to verify root user's auth method
-- FLUSH PRIVILEGES; to apply all changes
+- SELECT user,authentication_string,plugin,host FROM mysql.user; // to verify root user's auth method
+- ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'STRONG_PASSWORD_HERE'; // to set a root password
+- SELECT user,authentication_string,plugin,host FROM mysql.user; // to verify root user's auth method
+- FLUSH PRIVILEGES; // to apply all changes
 - mysql -u root -p to access db from now on, enter password STRONG_PASSWORD_HERE
 ```
 
@@ -83,8 +83,12 @@
 
 ```
 - sudo add-apt-repository universe to add software repo
-- sudo apt install php-fpm php-mysql to install the basic PHP software
-- sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
+- sudo apt install software-properties-common
+- sudo add-apt-repository ppa:ondrej/php // to instal PHP 8
+- sudo apt install curl
+- sudo apt install php8.0-fpm php8.0-mysql php8.0-gd php8.0-mbstring php8.0-bcmath php8.0-xml php8.0-zip php8.0-curl// to install the basic PHP software
+- sudo systemctl status php8.0-fpm // to check status
+- sudo nano /etc/nginx/sites-available/YOUR.DOMAIN.COM (if you haven't bought domain specify any)
 ```
 
 ```
@@ -115,24 +119,25 @@ server {
 - sudo unlink /etc/nginx/sites-enabled/default to remove default link
 - sudo nginx -t test the whole config
 - sudo systemctl reload nginx to apply all changes
-- sudo vim /var/www/html/info.php to start a new PHP file, fill it with <?php phpinfo();
+- sudo nano /var/www/html/info.php to start a new PHP file, fill it with <?php phpinfo();
 - sudo rm /var/www/html/info.php optional command to get rid of test file
 ```
 
 ### Let's Dial in The Laravel Ecosystem
 
 ```
-- sudo apt-get install php7.2-mbstring php7.2-xml composer unzip
+- sudo apt-get install php8.0-mbstring php8.0-xml composer unzip // composer should be updated after to version 2
 - mysql -u root -p Login to create the Laravel DB
+- CREATE USER 'laraveluser'@'localhost' IDENTIFIED BY 'your password here';
 - CREATE DATABASE laravel DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-- GRANT ALL ON laravel.* TO 'laraveluser'@'localhost' IDENTIFIED BY 'password';
+- GRANT ALL ON laravel.* TO 'laraveluser'@'localhost';
 - FLUSH PRIVILEGES;
 - exit
 - cd /var/www/html, sudo mkdir -p project-name
 - sudo chown laravel:laravel project-name
-- git clone https://github.com/coderstape/laravel-58-from-scratch.git .
+- git clone https://github.com/your-repo/laravel-project.git .
 - composer install
-- cp .env.example .env, and then vim .env
+- cp .env.example .env, and then nano .env
 ```
 
 - APP_NAME=Laravel
@@ -146,8 +151,8 @@ server {
 - DB_CONNECTION=mysql
 - DB_HOST=127.0.0.1
 - DB_PORT=3306
-- DB_DATABASE=root
-- DB_USERNAME=laravel
+- DB_DATABASE=laravel
+- DB_USERNAME=laraveluser
 - DB_PASSWORD=STRONG_PASSWORD_HERE
 
 ```
@@ -157,12 +162,13 @@ server {
 - sudo chmod -R ug+rwx storage bootstrap/cache fix permissions
 - sudo chmod -R 755 /var/www/html/project-name fix permissions
 - chmod -R 777 /var/www/html/project-name/storage/ fix permission
+- php artisan storage:link
 ```
 
 ### Modify Nginx
 
 ```
-- sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
+- sudo nano /etc/nginx/sites-available/YOUR.DOMAIN.COM
 ```
 
 ```
@@ -195,19 +201,21 @@ server {
 - sudo systemctl reload nginx reload Nginx
 ```
 
-### Let's Encrypt
+### Let's Encrypt (use this link https://certbot.eff.org/lets-encrypt/ubuntufocal-nginx)
 
+```
 sudo snap install core; sudo snap refresh core
 sudo apt-get remove certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 sudo certbot --nginx
 sudo certbot renew --dry-run
+```
 
-### Final mod for Nginx
+### Final mod for Nginx (this file will be updated automatically, you shouldn't modify it)
 
 ```
-- sudo vim /etc/nginx/sites-available/YOUR.DOMAIN.COM
+- sudo nano /etc/nginx/sites-available/YOUR.DOMAIN.COM // just to check
 ```
 ```
 server {
