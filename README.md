@@ -2,6 +2,13 @@
 
 ### Getting Started (AWS EC2 instance Ubuntu 20.04)
 
+Download your AWS key, locate it in any folder and run:
+
+```
+- chmod 400 Your-Key.pem
+- ssh ubuntu@your-ec2-ip // run command from directory where Your-Key.pem stored
+```
+
 ```
 - Change password on first login (not in case of AWS EC2)
 - adduser laravel
@@ -303,8 +310,8 @@ In the above example Redis was started without any explicit configuration file, 
 - sudo cp utils/redis_init_script /etc/init.d/redis_6379 // copy the init script that you'll find in the Redis distribution under the utils directory into /etc/init.d
 - sudo nano /etc/init.d/redis_6379 // modify REDISPORT accordingly to the port you are using or leave 6379
 - sudo cp redis.conf /etc/redis/6379.conf
-sudo mkdir /var/redis/6379
-sudo nano /etc/redis/6379.conf
+- sudo mkdir /var/redis/6379
+- sudo nano /etc/redis/6379.conf
 ```
 
 Edit the configuration file, making sure to perform the following changes:
