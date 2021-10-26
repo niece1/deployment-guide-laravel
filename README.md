@@ -157,11 +157,11 @@ server {
 
 ```
 - php artisan migrate
-- php artisan key:generate to generate the key
-- sudo chgrp -R www-data storage bootstrap/cache fix permissions
-- sudo chmod -R ug+rwx storage bootstrap/cache fix permissions
-- sudo chmod -R 755 /var/www/html/project-name fix permissions
-- chmod -R 777 /var/www/html/project-name/storage/ fix permission
+- php artisan key:generate // to generate the key
+- sudo chgrp -R www-data storage bootstrap/cache // to fix permissions
+- sudo chmod -R ug+rwx storage bootstrap/cache // to fix permissions
+- sudo chmod -R 755 /var/www/html/project-name // to fix permissions
+- chmod -R 777 /var/www/html/project-name/storage // to fix permission
 - php artisan storage:link
 ```
 
@@ -268,4 +268,58 @@ server {
 - sudo ufw allow 'Nginx HTTPS' to add NGINX
 - sudo ufw status to verify change
 - sudo systemctl reload nginx reload Nginx
+```
+
+### Configure php.ini
+
+```
+- sudo nano /etc/php/8.0/fpm/php.ini
+- find upload_max_filesize= in File uploads section and set it to 5M (or any other value you need)
+- find post_max_size= in Data handling section and set it to 8M (or any other value you need)
+```
+### Redis (follow this link https://redis.io/topics/quickstart manual)
+
+The suggested way of installing Redis is compiling it from sources as Redis has no dependencies other than a working GCC compiler and libc. Installing it using the package manager of your Linux distribution is somewhat discouraged as usually the available version is not the latest. In order to compile Redis follow these simple steps:
+
+```
+- sudo apt install make
+- sudo apt install gcc // to install C compiler as well as other tools that you may need for building software from source
+- sudo apt-get install tcl // to run make test (optional)
+- wget http://download.redis.io/redis-stable.tar.gz
+- tar xvzf redis-stable.tar.gz
+- cd redis-stable
+- make
+- make test // optional step
+- sudo make install
+- redis-server // to start redis server
+- redis-cli ping // response should be PONG
+```
+
+In the above example Redis was started without any explicit configuration file, so all the parameters will use the internal default. This is perfectly fine if you are starting Redis just to play a bit with it or for development, but for production environments you should use a configuration file.
+
+```
+- sudo mkdir /etc/redis
+- sudo mkdir /var/redis
+- sudo cp utils/redis_init_script /etc/init.d/redis_6379 // copy the init script that you'll find in the Redis distribution under the utils directory into /etc/init.d
+- sudo nano /etc/init.d/redis_6379 // modify REDISPORT accordingly to the port you are using or leave 6379
+- sudo cp redis.conf /etc/redis/6379.conf
+sudo mkdir /var/redis/6379
+sudo nano /etc/redis/6379.conf
+```
+
+Edit the configuration file, making sure to perform the following changes:
+
+* Set daemonize to yes (by default it is set to no)
+* Set the pidfile to /var/run/redis_6379.pid (modify the port if needed)
+* Change the port accordingly
+* Set your preferred loglevel
+* Set the logfile to /var/log/redis_6379.log
+* Set the dir to /var/redis/6379
+
+Finally add the new Redis init script to all the default runlevels using the following command
+
+```
+- sudo update-rc.d redis_6379 defaults
+- sudo /etc/init.d/redis_6379 start // to start redis server
+- sudo /etc/init.d/redis_6379 stop // use this command to stop redis server
 ```
