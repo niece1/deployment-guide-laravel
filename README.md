@@ -330,3 +330,40 @@ Finally add the new Redis init script to all the default runlevels using the fol
 - sudo /etc/init.d/redis_6379 start // to start redis server
 - sudo /etc/init.d/redis_6379 stop // use this command to stop redis server
 ```
+
+### Supervisor
+
+```
+- sudo apt-get install supervisor
+- service supervisor status // if active use next step to kill the process
+- sudo ps aux | grep supervisor // find PID here is 2957 (root        2957  0.6  2.1  31272 21928 ?        Ss   19:16   0:00 /usr/bin/python3 /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf) and kill it
+- sudo kill -2957 pid
+- sudo groupadd supervisor
+- sudo usermod -a -G supervisor laravel // laravel is a user here
+- sudo nano /etc/supervisor/supervisord.conf // in this file find and change next 2 entries below
+- chmod=0770 (default 0700)
+- chown=root:supervisor
+- sudo service supervisor restart
+- cd /etc/supervisor/conf.d // in this directory you can create any number of config files
+- sudo nano mail_queue_worker.conf // create config file and add the folowwing:
+```
+
+```
+[program:mail_queue_worker]
+process_name=%(program_name)s_%(process_num)02d
+command=sudo php /var/www/html/project-name/artisan queue:work --queue=mail_queue --tries=3 --daemon
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=root
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/html/project-name/storage/logs/mail_queue_worker.log
+```
+
+```
+- sudo supervisorctl reread // response should be available
+- sudo supervisorctl update
+- sudo supervisorctl status // should be running
+```
