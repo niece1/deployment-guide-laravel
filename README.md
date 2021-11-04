@@ -284,6 +284,7 @@ server {
 - find upload_max_filesize= in File uploads section and set it to 5M (or any other value you need)
 - find post_max_size= in Data handling section and set it to 8M (or any other value you need)
 ```
+
 ### Redis (follow this link https://redis.io/topics/quickstart manual)
 
 The suggested way of installing Redis is compiling it from sources as Redis has no dependencies other than a working GCC compiler and libc. Installing it using the package manager of your Linux distribution is somewhat discouraged as usually the available version is not the latest. In order to compile Redis follow these simple steps:
@@ -366,4 +367,15 @@ stdout_logfile=/var/www/html/project-name/storage/logs/mail_queue_worker.log
 - sudo supervisorctl reread // response should be available
 - sudo supervisorctl update
 - sudo supervisorctl status // should be running
+```
+
+### Cron
+
+Task scheduling in Ubuntu related to a user
+
+```
+- crontab -u your-username -e // open a crontab and set up a job for the first time specifying your Ubuntu username
+- * * * * * cd /var/www/html/project-name && php artisan schedule:run >> /dev/null 2>&1 // add to the crontab, save and exit
+- crontab -l // to get scheduled tasks
+- sudo service cron restart
 ```
