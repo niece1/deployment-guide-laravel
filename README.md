@@ -384,13 +384,21 @@ Task scheduling in Ubuntu related to a user
 
 ```
 - sudo nano /etc/nginx/nginx.conf // open Nginx config file
-- Uncomment following entries:
+```
+
+Uncomment following entries:
+
+```
 - gzip on;
 - gzip_comp_level    5;
 - gzip_min_length    256;
 - gzip_proxied       any;
 - gzip_vary          on;
-- to gzip_types add following (if not exists):
+```
+
+To gzip_types add following (if not exists):
+
+```
 - application/atom+xml
 - application/javascript
 - application/json
