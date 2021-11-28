@@ -424,3 +424,7 @@ To gzip_types add following (if not exists):
 - text/x-component
 - text/x-cross-domain-policy;
 ```
+
+```
+- sudo systemctl reload nginx // reload Nginx
+```
