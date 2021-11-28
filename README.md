@@ -26,8 +26,8 @@ Download your AWS key, locate it in any folder and run:
 - Copy it
 - su laravel then mkdir ~/.ssh fix permissions chmod 700 ~/.ssh in your production server
 - nano ~/.ssh/authorized_keys and paste key
-- chmod 600 ~/.ssh/authorized_keys to restrict this from being modified
-- exit to return to root user
+- chmod 600 ~/.ssh/authorized_keys // to restrict this from being modified
+- exit // to return to root user
 ```
 
 ### Disable Password from Server
@@ -59,11 +59,11 @@ Download your AWS key, locate it in any folder and run:
 #### Nginx
 
 ```
-- sudo apt update enter root password
-- sudo apt install nginx enter Y to install
-- sudo ufw app list For firewall
-- sudo ufw allow 'Nginx HTTP' to add NGINX
-- sudo ufw status to verify change
+- sudo apt update, enter root password
+- sudo apt install nginx, enter Y to install
+- sudo ufw app list // for firewall
+- sudo ufw allow 'Nginx HTTP' // to add NGINX
+- sudo ufw status // to verify change
 - Visit server in browser
 ```
 
@@ -89,11 +89,11 @@ Download your AWS key, locate it in any folder and run:
 #### PHP & Basic Nginx
 
 ```
-- sudo add-apt-repository universe to add software repo
+- sudo add-apt-repository universe // to add software repo
 - sudo apt install software-properties-common
 - sudo add-apt-repository ppa:ondrej/php // to instal PHP 8
 - sudo apt install curl
-- sudo apt install php8.0-fpm php8.0-mysql php8.0-gd php8.0-mbstring php8.0-bcmath php8.0-xml php8.0-zip php8.0-curl// to install the basic PHP software
+- sudo apt install php8.0-fpm php8.0-mysql php8.0-gd php8.0-mbstring php8.0-bcmath php8.0-xml php8.0-zip php8.0-curl // to install the basic PHP software
 - sudo systemctl status php8.0-fpm // to check status
 - sudo nano /etc/nginx/sites-available/YOUR.DOMAIN.COM (if you haven't bought domain specify any)
 ```
@@ -122,12 +122,12 @@ server {
 ```
 
 ```
-- sudo ln -s /etc/nginx/sites-available/YOUR.DOMAIN.COM /etc/nginx/sites-enabled/ to create symlink to enabled sites
-- sudo unlink /etc/nginx/sites-enabled/default to remove default link
-- sudo nginx -t test the whole config
-- sudo systemctl reload nginx to apply all changes
-- sudo nano /var/www/html/info.php to start a new PHP file, fill it with <?php phpinfo();
-- sudo rm /var/www/html/info.php optional command to get rid of test file
+- sudo ln -s /etc/nginx/sites-available/YOUR.DOMAIN.COM /etc/nginx/sites-enabled/   // to create symlink to enabled sites
+- sudo unlink /etc/nginx/sites-enabled/default // to remove default link
+- sudo nginx -t // test the whole config
+- sudo systemctl reload nginx // to apply all changes
+- sudo nano /var/www/html/info.php // to start a new PHP file, fill it with <?php phpinfo();
+- sudo rm /var/www/html/info.php // optional command to get rid of test file
 ```
 
 ### Let's Dial in The Laravel Ecosystem
@@ -205,7 +205,7 @@ server {
 
 ```
 - sudo nginx -t
-- sudo systemctl reload nginx reload Nginx
+- sudo systemctl reload nginx // reload Nginx
 ```
 
 ### Let's Encrypt (use this link https://certbot.eff.org/lets-encrypt/ubuntufocal-nginx)
@@ -271,10 +271,10 @@ server {
 
 ```
 - sudo nginx -t
-- sudo ufw app list For firewall
-- sudo ufw allow 'Nginx HTTPS' to add NGINX
-- sudo ufw status to verify change
-- sudo systemctl reload nginx reload Nginx
+- sudo ufw app list // for firewall
+- sudo ufw allow 'Nginx HTTPS' // to add NGINX
+- sudo ufw status // to verify change
+- sudo systemctl reload nginx // reload Nginx
 ```
 
 ### Configure php.ini
@@ -378,4 +378,41 @@ Task scheduling in Ubuntu related to a user
 - * * * * * cd /var/www/html/project-name && php artisan schedule:run >> /dev/null 2>&1 // add to the crontab, save and exit
 - crontab -l // to get scheduled tasks
 - sudo service cron restart
+```
+
+### Enable GZIP Compression on Nginx
+
+```
+- sudo nano /etc/nginx/nginx.conf // open Nginx config file
+- Uncomment following entries:
+- gzip on;
+- gzip_comp_level    5;
+- gzip_min_length    256;
+- gzip_proxied       any;
+- gzip_vary          on;
+- to gzip_types add following (if not exists):
+- application/atom+xml
+- application/javascript
+- application/json
+- application/ld+json
+- application/manifest+json
+- application/rss+xml
+- application/vnd.geo+json
+- application/vnd.ms-fontobject
+- application/x-font-ttf
+- application/x-web-app-manifest+json
+- application/xhtml+xml
+- application/xml
+- font/opentype
+- image/bmp
+- image/svg+xml
+- image/x-icon
+- text/cache-manifest
+- text/css
+- text/plain
+- text/vcard
+- text/vnd.rim.location.xloc
+- text/vtt
+- text/x-component
+- text/x-cross-domain-policy;
 ```
